@@ -1,6 +1,6 @@
 <?php
 
-namespace Isahaq\UniversalBarcode;
+namespace Isahaq\Barcode;
 
 use TCPDF;
 

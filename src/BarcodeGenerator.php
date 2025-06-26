@@ -221,7 +221,7 @@ class BarcodeGenerator
     /**
      * Convert type to Picqer format
      */
-    protected function getPicqerType(string $type): int
+    protected function getPicqerType(string $type): string
     {
         $typeMap = [
             'C39' => PicqerBarcodeGenerator::TYPE_CODE_39,

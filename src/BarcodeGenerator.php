@@ -38,14 +38,15 @@ class BarcodeGenerator
     public function generatePNG(string $type, string $code, array $options = []): string
     {
         $options = array_merge($this->defaultOptions, $options);
-        
         try {
             $generator = new BarcodeGeneratorPNG();
-            $generator->setWidth($options['width']);
-            $generator->setHeight($options['height']);
-            $generator->setForegroundColor($options['foreground_color'][0], $options['foreground_color'][1], $options['foreground_color'][2]);
-            
-            return $generator->getBarcode($code, $this->getPicqerType($type));
+            return $generator->getBarcode(
+                $code,
+                $this->getPicqerType($type),
+                $options['width'],
+                $options['height'],
+                $options['foreground_color']
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to generate PNG barcode: " . $e->getMessage());
         }
@@ -57,14 +58,15 @@ class BarcodeGenerator
     public function generateSVG(string $type, string $code, array $options = []): string
     {
         $options = array_merge($this->defaultOptions, $options);
-        
         try {
             $generator = new BarcodeGeneratorSVG();
-            $generator->setWidth($options['width']);
-            $generator->setHeight($options['height']);
-            $generator->setForegroundColor($options['foreground_color'][0], $options['foreground_color'][1], $options['foreground_color'][2]);
-            
-            return $generator->getBarcode($code, $this->getPicqerType($type));
+            return $generator->getBarcode(
+                $code,
+                $this->getPicqerType($type),
+                $options['width'],
+                $options['height'],
+                $options['foreground_color']
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to generate SVG barcode: " . $e->getMessage());
         }
@@ -76,14 +78,15 @@ class BarcodeGenerator
     public function generateHTML(string $type, string $code, array $options = []): string
     {
         $options = array_merge($this->defaultOptions, $options);
-        
         try {
             $generator = new BarcodeGeneratorHTML();
-            $generator->setWidth($options['width']);
-            $generator->setHeight($options['height']);
-            $generator->setForegroundColor($options['foreground_color'][0], $options['foreground_color'][1], $options['foreground_color'][2]);
-            
-            return $generator->getBarcode($code, $this->getPicqerType($type));
+            return $generator->getBarcode(
+                $code,
+                $this->getPicqerType($type),
+                $options['width'],
+                $options['height'],
+                $options['foreground_color']
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to generate HTML barcode: " . $e->getMessage());
         }
@@ -95,14 +98,15 @@ class BarcodeGenerator
     public function generateJPG(string $type, string $code, array $options = []): string
     {
         $options = array_merge($this->defaultOptions, $options);
-        
         try {
             $generator = new BarcodeGeneratorJPG();
-            $generator->setWidth($options['width']);
-            $generator->setHeight($options['height']);
-            $generator->setForegroundColor($options['foreground_color'][0], $options['foreground_color'][1], $options['foreground_color'][2]);
-            
-            return $generator->getBarcode($code, $this->getPicqerType($type));
+            return $generator->getBarcode(
+                $code,
+                $this->getPicqerType($type),
+                $options['width'],
+                $options['height'],
+                $options['foreground_color']
+            );
         } catch (Exception $e) {
             throw new Exception("Failed to generate JPG barcode: " . $e->getMessage());
         }

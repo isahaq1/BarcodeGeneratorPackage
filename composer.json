@@ -1,19 +1,62 @@
 {
-  "name": "isahaq/barcode",
-  "description": "A Universal Barcode generator for Laravel and PHP",
+  "name": "isahaq/barcode-qrcode-generator",
+  "description": "A Universal Barcode and QR Code generator for Laravel and PHP with multiple format support",
   "type": "library",
   "license": "MIT",
-  "autoload": {
-    "psr-4": {
-      "Isahaq\\Barcode\\": "src/"
-    }
-  },
+  "keywords": [
+    "barcode",
+    "qrcode",
+    "generator",
+    "laravel",
+    "php"
+  ],
   "authors": [
     {
-      "name": "Isahaq"
+      "name": "Isahaq",
+      "email": "isahaq@example.com"
     }
   ],
   "require": {
-    "tecnickcom/tcpdf": "^6.6"
-  }
+    "php": "^7.4|^8.0",
+    "tecnickcom/tcpdf": "^6.6",
+    "endroid/qr-code": "^4.0",
+    "picqer/php-barcode-generator": "^2.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.0|^10.0",
+    "orchestra/testbench": "^6.0|^7.0|^8.0",
+    "mockery/mockery": "^1.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Isahaq\\BarcodeQrCode\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Isahaq\\BarcodeQrCode\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Isahaq\\BarcodeQrCode\\BarcodeQrCodeServiceProvider"
+      ],
+      "aliases": {
+        "Barcode": "Isahaq\\BarcodeQrCode\\Facades\\Barcode",
+        "QRCode": "Isahaq\\BarcodeQrCode\\Facades\\QRCode"
+      }
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "test-coverage": "phpunit --coverage-html coverage",
+    "test-verbose": "phpunit --verbose",
+    "example": "php examples/basic_usage.php"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }

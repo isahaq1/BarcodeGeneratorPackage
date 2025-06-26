@@ -1,0 +1,42 @@
+# Composer
+/vendor/
+composer.lock
+
+# PHPUnit
+.phpunit.cache/
+coverage/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Generated files
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.html
+*.pdf
+
+# Logs
+*.log
+
+# Environment files
+.env
+.env.local
+.env.testing
+
+# Laravel
+bootstrap/cache/
+storage/
+public/storage/
+
+# Temporary files
+*.tmp
+*.temp 

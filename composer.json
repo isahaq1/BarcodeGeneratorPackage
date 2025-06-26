@@ -1,0 +1,19 @@
+{
+  "name": "isahaq/barcode",
+  "description": "A Universal Barcode generator for Laravel and PHP",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Isahaq\\Barcode\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Isahaq"
+    }
+  ],
+  "require": {
+    "tecnickcom/tcpdf": "^6.6"
+  }
+}

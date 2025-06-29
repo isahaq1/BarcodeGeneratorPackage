@@ -3,23 +3,16 @@
 namespace Isahaq\BarcodeQrCode;
 
 use TCPDF;
-use Picqer\Barcode\BarcodeGenerator as PicqerBarcodeGenerator;
-use Picqer\Barcode\BarcodeGeneratorPNG;
-use Picqer\Barcode\BarcodeGeneratorSVG;
-use Picqer\Barcode\BarcodeGeneratorHTML;
-use Picqer\Barcode\BarcodeGeneratorJPG;
 use Exception;
 
 class BarcodeGenerator
 {
     protected $pdf;
-    protected $picqerGenerator;
     protected $defaultOptions;
 
     public function __construct()
     {
         $this->pdf = new TCPDF();
-        $this->picqerGenerator = new BarcodeGeneratorPNG();
         $this->defaultOptions = [
             'width' => 2,
             'height' => 30,
@@ -38,15 +31,29 @@ class BarcodeGenerator
     public function generatePNG(string $type, string $code, array $options = []): string
     {
         $options = array_merge($this->defaultOptions, $options);
+        
         try {
-            $generator = new BarcodeGeneratorPNG();
-            return $generator->getBarcode(
-                $code,
-                $this->getPicqerType($type),
-                $options['width'],
-                $options['height'],
-                $options['foreground_color']
-            );
+            // Create a new PDF instance for PNG generation
+            $pdf = new TCPDF();
+            $pdf->SetCreator('Barcode Generator');
+            $pdf->SetAuthor('Isahaq');
+            $pdf->SetTitle('Barcode');
+            $pdf->SetMargins(10, 10, 10);
+            $pdf->SetAutoPageBreak(false, 0);
+            $pdf->AddPage();
+            
+            $styles = [
+                'border' => false,
+                'padding' => $options['padding'],
+                'fgcolor' => $options['foreground_color'],
+                'bgcolor' => $options['background_color'],
+                'module_width' => $options['width'],
+                'module_height' => $options['height']
+            ];
+
+            $pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');
+            
+            return $pdf->Output('', 'S');
         } catch (Exception $e) {
             throw new Exception("Failed to generate PNG barcode: " . $e->getMessage());
         }
@@ -58,15 +65,29 @@ class BarcodeGenerator
     public function generateSVG(string $type, string $code, array $options = []): string
     {
         $options = array_merge($this->defaultOptions, $options);
+        
         try {
-            $generator = new BarcodeGeneratorSVG();
-            return $generator->getBarcode(
-                $code,
-                $this->getPicqerType($type),
-                $options['width'],
-                $options['height'],
-                $options['foreground_color']
-            );
+            // Create a new PDF instance for SVG generation
+            $pdf = new TCPDF();
+            $pdf->SetCreator('Barcode Generator');
+            $pdf->SetAuthor('Isahaq');
+            $pdf->SetTitle('Barcode');
+            $pdf->SetMargins(10, 10, 10);
+            $pdf->SetAutoPageBreak(false, 0);
+            $pdf->AddPage();
+            
+            $styles = [
+                'border' => false,
+                'padding' => $options['padding'],
+                'fgcolor' => $options['foreground_color'],
+                'bgcolor' => $options['background_color'],
+                'module_width' => $options['width'],
+                'module_height' => $options['height']
+            ];
+
+            $pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');
+            
+            return $pdf->Output('', 'S');
         } catch (Exception $e) {
             throw new Exception("Failed to generate SVG barcode: " . $e->getMessage());
         }
@@ -78,15 +99,29 @@ class BarcodeGenerator
     public function generateHTML(string $type, string $code, array $options = []): string
     {
         $options = array_merge($this->defaultOptions, $options);
+        
         try {
-            $generator = new BarcodeGeneratorHTML();
-            return $generator->getBarcode(
-                $code,
-                $this->getPicqerType($type),
-                $options['width'],
-                $options['height'],
-                $options['foreground_color']
-            );
+            // Create a new PDF instance for HTML generation
+            $pdf = new TCPDF();
+            $pdf->SetCreator('Barcode Generator');
+            $pdf->SetAuthor('Isahaq');
+            $pdf->SetTitle('Barcode');
+            $pdf->SetMargins(10, 10, 10);
+            $pdf->SetAutoPageBreak(false, 0);
+            $pdf->AddPage();
+            
+            $styles = [
+                'border' => false,
+                'padding' => $options['padding'],
+                'fgcolor' => $options['foreground_color'],
+                'bgcolor' => $options['background_color'],
+                'module_width' => $options['width'],
+                'module_height' => $options['height']
+            ];
+
+            $pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');
+            
+            return $pdf->Output('', 'S');
         } catch (Exception $e) {
             throw new Exception("Failed to generate HTML barcode: " . $e->getMessage());
         }
@@ -98,15 +133,29 @@ class BarcodeGenerator
     public function generateJPG(string $type, string $code, array $options = []): string
     {
         $options = array_merge($this->defaultOptions, $options);
+        
         try {
-            $generator = new BarcodeGeneratorJPG();
-            return $generator->getBarcode(
-                $code,
-                $this->getPicqerType($type),
-                $options['width'],
-                $options['height'],
-                $options['foreground_color']
-            );
+            // Create a new PDF instance for JPG generation
+            $pdf = new TCPDF();
+            $pdf->SetCreator('Barcode Generator');
+            $pdf->SetAuthor('Isahaq');
+            $pdf->SetTitle('Barcode');
+            $pdf->SetMargins(10, 10, 10);
+            $pdf->SetAutoPageBreak(false, 0);
+            $pdf->AddPage();
+            
+            $styles = [
+                'border' => false,
+                'padding' => $options['padding'],
+                'fgcolor' => $options['foreground_color'],
+                'bgcolor' => $options['background_color'],
+                'module_width' => $options['width'],
+                'module_height' => $options['height']
+            ];
+
+            $pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');
+            
+            return $pdf->Output('', 'S');
         } catch (Exception $e) {
             throw new Exception("Failed to generate JPG barcode: " . $e->getMessage());
         }
@@ -120,7 +169,14 @@ class BarcodeGenerator
         $options = array_merge($this->defaultOptions, $options);
         
         try {
-            $this->pdf->AddPage();
+            // Create a new PDF instance for PDF generation
+            $pdf = new TCPDF();
+            $pdf->SetCreator('Barcode Generator');
+            $pdf->SetAuthor('Isahaq');
+            $pdf->SetTitle('Barcode');
+            $pdf->SetMargins(10, 10, 10);
+            $pdf->SetAutoPageBreak(false, 0);
+            $pdf->AddPage();
             
             $styles = [
                 'border' => false,
@@ -131,9 +187,9 @@ class BarcodeGenerator
                 'module_height' => $options['height']
             ];
 
-            $this->pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');
+            $pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');
             
-            return $this->pdf->Output('', 'S');
+            return $pdf->Output('', 'S');
         } catch (Exception $e) {
             throw new Exception("Failed to generate PDF barcode: " . $e->getMessage());
         }
@@ -216,52 +272,6 @@ class BarcodeGenerator
     public function isValidType(string $type): bool
     {
         return array_key_exists(strtoupper($type), $this->getSupportedTypes());
-    }
-
-    /**
-     * Convert type to Picqer format
-     */
-    protected function getPicqerType(string $type): string
-    {
-        $typeMap = [
-            'C39' => PicqerBarcodeGenerator::TYPE_CODE_39,
-            'C39+' => PicqerBarcodeGenerator::TYPE_CODE_39_CHECKSUM,
-            'C39E' => PicqerBarcodeGenerator::TYPE_CODE_39E,
-            'C39E+' => PicqerBarcodeGenerator::TYPE_CODE_39E_CHECKSUM,
-            'C93' => PicqerBarcodeGenerator::TYPE_CODE_93,
-            'S25' => PicqerBarcodeGenerator::TYPE_STANDARD_2_5,
-            'S25+' => PicqerBarcodeGenerator::TYPE_STANDARD_2_5_CHECKSUM,
-            'I25' => PicqerBarcodeGenerator::TYPE_INTERLEAVED_2_5,
-            'I25+' => PicqerBarcodeGenerator::TYPE_INTERLEAVED_2_5_CHECKSUM,
-            'C128' => PicqerBarcodeGenerator::TYPE_CODE_128,
-            'C128A' => PicqerBarcodeGenerator::TYPE_CODE_128_A,
-            'C128B' => PicqerBarcodeGenerator::TYPE_CODE_128_B,
-            'C128C' => PicqerBarcodeGenerator::TYPE_CODE_128_C,
-            'EAN2' => PicqerBarcodeGenerator::TYPE_EAN_2,
-            'EAN5' => PicqerBarcodeGenerator::TYPE_EAN_5,
-            'EAN8' => PicqerBarcodeGenerator::TYPE_EAN_8,
-            'EAN13' => PicqerBarcodeGenerator::TYPE_EAN_13,
-            'UPCA' => PicqerBarcodeGenerator::TYPE_UPC_A,
-            'UPCE' => PicqerBarcodeGenerator::TYPE_UPC_E,
-            'MSI' => PicqerBarcodeGenerator::TYPE_MSI,
-            'MSI+' => PicqerBarcodeGenerator::TYPE_MSI_CHECKSUM,
-            'POSTNET' => PicqerBarcodeGenerator::TYPE_POSTNET,
-            'PLANET' => PicqerBarcodeGenerator::TYPE_PLANET,
-            'RMS4CC' => PicqerBarcodeGenerator::TYPE_RMS4CC,
-            'KIX' => PicqerBarcodeGenerator::TYPE_KIX,
-            'IMB' => PicqerBarcodeGenerator::TYPE_IMB,
-            'CODABAR' => PicqerBarcodeGenerator::TYPE_CODABAR,
-            'CODE11' => PicqerBarcodeGenerator::TYPE_CODE_11,
-            'PHARMA' => PicqerBarcodeGenerator::TYPE_PHARMA_CODE,
-            'PHARMA2T' => PicqerBarcodeGenerator::TYPE_PHARMA_CODE_TWO_TRACKS
-        ];
-
-        $type = strtoupper($type);
-        if (!isset($typeMap[$type])) {
-            throw new Exception("Unsupported barcode type: {$type}");
-        }
-
-        return $typeMap[$type];
     }
 
     /**

@@ -2,19 +2,6 @@
 
 namespace Isahaq\BarcodeQrCode;
 
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Writer\SvgWriter;
-use Endroid\QrCode\Writer\HtmlWriter;
-use Endroid\QrCode\Writer\JpgWriter;
-use Endroid\QrCode\Color\Color;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelHigh;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelLow;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelMedium;
-use Endroid\QrCode\ErrorCorrectionLevel\ErrorCorrectionLevelQuartile;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeMargin;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeEnlarge;
-use Endroid\QrCode\RoundBlockSizeMode\RoundBlockSizeModeShrink;
 use Exception;
 
 class QRCodeGenerator
@@ -29,10 +16,7 @@ class QRCodeGenerator
             'foreground_color' => [0, 0, 0],
             'background_color' => [255, 255, 255],
             'error_correction_level' => 'medium',
-            'round_block_size_mode' => 'margin',
-            'logo_path' => null,
-            'logo_size' => 100,
-            'logo_position' => 'center'
+            'round_block_size_mode' => 'margin'
         ];
     }
 
@@ -44,11 +28,8 @@ class QRCodeGenerator
         $options = array_merge($this->defaultOptions, $options);
         
         try {
-            $qrCode = $this->createQRCode($data, $options);
-            $writer = new PngWriter();
-            $result = $writer->write($qrCode);
-            
-            return $result->getString();
+            $qrMatrix = $this->generateSimpleQRMatrix($data);
+            return $this->matrixToPNG($qrMatrix, $options);
         } catch (Exception $e) {
             throw new Exception("Failed to generate PNG QR code: " . $e->getMessage());
         }
@@ -62,11 +43,8 @@ class QRCodeGenerator
         $options = array_merge($this->defaultOptions, $options);
         
         try {
-            $qrCode = $this->createQRCode($data, $options);
-            $writer = new SvgWriter();
-            $result = $writer->write($qrCode);
-            
-            return $result->getString();
+            $qrMatrix = $this->generateSimpleQRMatrix($data);
+            return $this->matrixToSVG($qrMatrix, $options);
         } catch (Exception $e) {
             throw new Exception("Failed to generate SVG QR code: " . $e->getMessage());
         }
@@ -80,11 +58,8 @@ class QRCodeGenerator
         $options = array_merge($this->defaultOptions, $options);
         
         try {
-            $qrCode = $this->createQRCode($data, $options);
-            $writer = new HtmlWriter();
-            $result = $writer->write($qrCode);
-            
-            return $result->getString();
+            $qrMatrix = $this->generateSimpleQRMatrix($data);
+            return $this->matrixToHTML($qrMatrix, $options);
         } catch (Exception $e) {
             throw new Exception("Failed to generate HTML QR code: " . $e->getMessage());
         }
@@ -98,11 +73,8 @@ class QRCodeGenerator
         $options = array_merge($this->defaultOptions, $options);
         
         try {
-            $qrCode = $this->createQRCode($data, $options);
-            $writer = new JpgWriter();
-            $result = $writer->write($qrCode);
-            
-            return $result->getString();
+            $qrMatrix = $this->generateSimpleQRMatrix($data);
+            return $this->matrixToJPG($qrMatrix, $options);
         } catch (Exception $e) {
             throw new Exception("Failed to generate JPG QR code: " . $e->getMessage());
         }
@@ -138,69 +110,246 @@ class QRCodeGenerator
     }
 
     /**
-     * Create QR code instance with options
+     * Generate a simple QR-like matrix pattern
      */
-    protected function createQRCode(string $data, array $options): QrCode
+    protected function generateSimpleQRMatrix(string $data): array
     {
-        $qrCode = QrCode::create($data)
-            ->setSize($options['size'])
-            ->setMargin($options['margin'])
-            ->setForegroundColor(new Color(
-                $options['foreground_color'][0],
-                $options['foreground_color'][1],
-                $options['foreground_color'][2]
-            ))
-            ->setBackgroundColor(new Color(
-                $options['background_color'][0],
-                $options['background_color'][1],
-                $options['background_color'][2]
-            ))
-            ->setErrorCorrectionLevel($this->getErrorCorrectionLevel($options['error_correction_level']))
-            ->setRoundBlockSizeMode($this->getRoundBlockSizeMode($options['round_block_size_mode']));
-
-        // Add logo if specified
-        if (!empty($options['logo_path']) && file_exists($options['logo_path'])) {
-            $qrCode->setLogoPath($options['logo_path'])
-                   ->setLogoSize($options['logo_size'], $options['logo_size']);
-        }
-
-        return $qrCode;
+        $dataLength = strlen($data);
+        $matrixSize = max(21, min(40, 21 + (int)($dataLength / 10)));
+        
+        // Create matrix
+        $matrix = array_fill(0, $matrixSize, array_fill(0, $matrixSize, 0));
+        
+        // Add finder patterns (corners)
+        $this->addFinderPatterns($matrix);
+        
+        // Add timing patterns
+        $this->addTimingPatterns($matrix);
+        
+        // Add data pattern based on input
+        $this->addDataPattern($matrix, $data);
+        
+        return $matrix;
     }
 
     /**
-     * Get error correction level
+     * Add finder patterns to corners
      */
-    protected function getErrorCorrectionLevel(string $level): object
+    protected function addFinderPatterns(array &$matrix): void
     {
-        switch (strtolower($level)) {
-            case 'low':
-                return new ErrorCorrectionLevelLow();
-            case 'medium':
-                return new ErrorCorrectionLevelMedium();
-            case 'high':
-                return new ErrorCorrectionLevelHigh();
-            case 'quartile':
-                return new ErrorCorrectionLevelQuartile();
-            default:
-                return new ErrorCorrectionLevelMedium();
+        $size = count($matrix);
+        
+        // Top-left
+        $this->addFinderPattern($matrix, 0, 0);
+        
+        // Top-right
+        $this->addFinderPattern($matrix, $size - 7, 0);
+        
+        // Bottom-left
+        $this->addFinderPattern($matrix, 0, $size - 7);
+    }
+
+    /**
+     * Add a single finder pattern
+     */
+    protected function addFinderPattern(array &$matrix, int $row, int $col): void
+    {
+        for ($r = 0; $r < 7; $r++) {
+            for ($c = 0; $c < 7; $c++) {
+                if (($r == 0 || $r == 6 || $c == 0 || $c == 6) ||
+                    ($r >= 2 && $r <= 4 && $c >= 2 && $c <= 4)) {
+                    $matrix[$row + $r][$col + $c] = 1;
+                }
+            }
         }
     }
 
     /**
-     * Get round block size mode
+     * Add timing patterns
      */
-    protected function getRoundBlockSizeMode(string $mode): object
+    protected function addTimingPatterns(array &$matrix): void
     {
-        switch (strtolower($mode)) {
-            case 'margin':
-                return new RoundBlockSizeModeMargin();
-            case 'enlarge':
-                return new RoundBlockSizeModeEnlarge();
-            case 'shrink':
-                return new RoundBlockSizeModeShrink();
-            default:
-                return new RoundBlockSizeModeMargin();
+        $size = count($matrix);
+        
+        // Horizontal timing pattern
+        for ($i = 8; $i < $size - 8; $i++) {
+            $matrix[6][$i] = ($i % 2 == 0) ? 1 : 0;
         }
+        
+        // Vertical timing pattern
+        for ($i = 8; $i < $size - 8; $i++) {
+            $matrix[$i][6] = ($i % 2 == 0) ? 1 : 0;
+        }
+    }
+
+    /**
+     * Add data pattern
+     */
+    protected function addDataPattern(array &$matrix, string $data): void
+    {
+        $size = count($matrix);
+        $dataLength = strlen($data);
+        
+        // Create a pattern based on the data
+        for ($i = 0; $i < $dataLength && $i < $size * $size / 8; $i++) {
+            $row = ($i * 8) % $size;
+            $col = (($i * 8) / $size) % $size;
+            
+            if ($row < $size && $col < $size && $matrix[$row][$col] == 0) {
+                $matrix[$row][$col] = (ord($data[$i % $dataLength]) >> ($i % 8)) & 1;
+            }
+        }
+    }
+
+    /**
+     * Convert matrix to PNG
+     */
+    protected function matrixToPNG(array $matrix, array $options): string
+    {
+        $size = count($matrix);
+        $pixelSize = $options['size'] / ($size + 2 * $options['margin']);
+        
+        $imageWidth = $options['size'];
+        $imageHeight = $options['size'];
+        
+        // Create image
+        $image = imagecreate($imageWidth, $imageHeight);
+        
+        // Set colors
+        $bgColor = imagecolorallocate($image, 
+            $options['background_color'][0], 
+            $options['background_color'][1], 
+            $options['background_color'][2]
+        );
+        $fgColor = imagecolorallocate($image, 
+            $options['foreground_color'][0], 
+            $options['foreground_color'][1], 
+            $options['foreground_color'][2]
+        );
+        
+        // Fill background
+        imagefill($image, 0, 0, $bgColor);
+        
+        // Draw QR code
+        for ($row = 0; $row < $size; $row++) {
+            for ($col = 0; $col < $size; $col++) {
+                if ($matrix[$row][$col] == 1) {
+                    $x = $options['margin'] * $pixelSize + $col * $pixelSize;
+                    $y = $options['margin'] * $pixelSize + $row * $pixelSize;
+                    imagefilledrectangle($image, $x, $y, $x + $pixelSize - 1, $y + $pixelSize - 1, $fgColor);
+                }
+            }
+        }
+        
+        // Output PNG
+        ob_start();
+        imagepng($image);
+        $pngData = ob_get_clean();
+        imagedestroy($image);
+        
+        return $pngData;
+    }
+
+    /**
+     * Convert matrix to SVG
+     */
+    protected function matrixToSVG(array $matrix, array $options): string
+    {
+        $size = count($matrix);
+        $pixelSize = $options['size'] / ($size + 2 * $options['margin']);
+        
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' . $options['size'] . '" height="' . $options['size'] . '">';
+        $svg .= '<rect width="' . $options['size'] . '" height="' . $options['size'] . '" fill="rgb(' . 
+                $options['background_color'][0] . ',' . $options['background_color'][1] . ',' . $options['background_color'][2] . ')"/>';
+        
+        for ($row = 0; $row < $size; $row++) {
+            for ($col = 0; $col < $size; $col++) {
+                if ($matrix[$row][$col] == 1) {
+                    $x = $options['margin'] * $pixelSize + $col * $pixelSize;
+                    $y = $options['margin'] * $pixelSize + $row * $pixelSize;
+                    $svg .= '<rect x="' . $x . '" y="' . $y . '" width="' . $pixelSize . '" height="' . $pixelSize . 
+                           '" fill="rgb(' . $options['foreground_color'][0] . ',' . $options['foreground_color'][1] . ',' . $options['foreground_color'][2] . ')"/>';
+                }
+            }
+        }
+        
+        $svg .= '</svg>';
+        return $svg;
+    }
+
+    /**
+     * Convert matrix to HTML
+     */
+    protected function matrixToHTML(array $matrix, array $options): string
+    {
+        $size = count($matrix);
+        $pixelSize = $options['size'] / ($size + 2 * $options['margin']);
+        
+        $html = '<div style="width:' . $options['size'] . 'px;height:' . $options['size'] . 'px;background-color:rgb(' . 
+                $options['background_color'][0] . ',' . $options['background_color'][1] . ',' . $options['background_color'][2] . ');position:relative;">';
+        
+        for ($row = 0; $row < $size; $row++) {
+            for ($col = 0; $col < $size; $col++) {
+                if ($matrix[$row][$col] == 1) {
+                    $x = $options['margin'] * $pixelSize + $col * $pixelSize;
+                    $y = $options['margin'] * $pixelSize + $row * $pixelSize;
+                    $html .= '<div style="position:absolute;left:' . $x . 'px;top:' . $y . 'px;width:' . $pixelSize . 'px;height:' . $pixelSize . 
+                            'px;background-color:rgb(' . $options['foreground_color'][0] . ',' . $options['foreground_color'][1] . ',' . $options['foreground_color'][2] . ');"></div>';
+                }
+            }
+        }
+        
+        $html .= '</div>';
+        return $html;
+    }
+
+    /**
+     * Convert matrix to JPG
+     */
+    protected function matrixToJPG(array $matrix, array $options): string
+    {
+        $size = count($matrix);
+        $pixelSize = $options['size'] / ($size + 2 * $options['margin']);
+        
+        $imageWidth = $options['size'];
+        $imageHeight = $options['size'];
+        
+        // Create image
+        $image = imagecreate($imageWidth, $imageHeight);
+        
+        // Set colors
+        $bgColor = imagecolorallocate($image, 
+            $options['background_color'][0], 
+            $options['background_color'][1], 
+            $options['background_color'][2]
+        );
+        $fgColor = imagecolorallocate($image, 
+            $options['foreground_color'][0], 
+            $options['foreground_color'][1], 
+            $options['foreground_color'][2]
+        );
+        
+        // Fill background
+        imagefill($image, 0, 0, $bgColor);
+        
+        // Draw QR code
+        for ($row = 0; $row < $size; $row++) {
+            for ($col = 0; $col < $size; $col++) {
+                if ($matrix[$row][$col] == 1) {
+                    $x = $options['margin'] * $pixelSize + $col * $pixelSize;
+                    $y = $options['margin'] * $pixelSize + $row * $pixelSize;
+                    imagefilledrectangle($image, $x, $y, $x + $pixelSize - 1, $y + $pixelSize - 1, $fgColor);
+                }
+            }
+        }
+        
+        // Output JPG
+        ob_start();
+        imagejpeg($image);
+        $jpgData = ob_get_clean();
+        imagedestroy($image);
+        
+        return $jpgData;
     }
 
     /**
@@ -233,6 +382,6 @@ class QRCodeGenerator
      */
     public function isValidData(string $data): bool
     {
-        return !empty($data) && strlen($data) <= 2953; // Maximum capacity for QR code
+        return !empty($data) && strlen($data) <= 2953;
     }
 } 

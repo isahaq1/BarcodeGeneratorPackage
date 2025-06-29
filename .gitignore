@@ -17,6 +17,7 @@ coverage/
 Thumbs.db
 
 # Generated files
+*.png
 *.jpg
 *.jpeg
 *.svg

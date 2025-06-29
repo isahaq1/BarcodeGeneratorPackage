@@ -1,4 +1,6 @@
 ﻿# Barcode & QR Code Generator for Laravel and PHP
+ ![Banner](./banner.png)
+
 A comprehensive barcode and QR code generator package for Laravel and PHP applications. This package provides easy-to-use functionality for generating various types of barcodes and QR codes using TCPDF library.
 
 ## Features

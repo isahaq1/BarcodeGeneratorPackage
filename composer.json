@@ -1,6 +1,6 @@
 {
   "name": "isahaq/barcode-qrcode-generator",
-  "description": "A Universal Barcode and QR Code generator for Laravel and PHP with multiple format support",
+  "description": "A Universal Barcode generator and QR Code generator for Laravel and PHP with multiple format support",
   "type": "library",
   "license": "MIT",
   "keywords": [

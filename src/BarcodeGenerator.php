@@ -25,7 +25,7 @@ class BarcodeGenerator
             'height' => 30,
             'foreground_color' => [0, 0, 0],
             'background_color' => [255, 255, 255],
-            'text' => true,
+            'show_text' => true,
             'text_size' => 12,
             'text_position' => 'bottom',
             'padding' => 10

@@ -48,7 +48,8 @@ class BarcodeGenerator
                 'fgcolor' => $options['foreground_color'],
                 'bgcolor' => $options['background_color'],
                 'module_width' => $options['width'],
-                'module_height' => $options['height']
+                'module_height' => $options['height'],
+                'show_text' => $options['text']
             ];
 
             $pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');

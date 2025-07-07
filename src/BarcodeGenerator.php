@@ -49,7 +49,7 @@ class BarcodeGenerator
                 'bgcolor' => $options['background_color'],
                 'module_width' => $options['width'],
                 'module_height' => $options['height'],
-                'show_text' => $options['text'],
+                'show_text' => true
             ];
 
             $pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');
@@ -83,8 +83,7 @@ class BarcodeGenerator
                 'fgcolor' => $options['foreground_color'],
                 'bgcolor' => $options['background_color'],
                 'module_width' => $options['width'],
-                'module_height' => $options['height'],
-                'show_text' => $options['text'],
+                'module_height' => $options['height']
             ];
 
             $pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');
@@ -118,8 +117,7 @@ class BarcodeGenerator
                 'fgcolor' => $options['foreground_color'],
                 'bgcolor' => $options['background_color'],
                 'module_width' => $options['width'],
-                'module_height' => $options['height'],
-                'show_text' => $options['text'],
+                'module_height' => $options['height']
             ];
 
             $pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');
@@ -153,8 +151,7 @@ class BarcodeGenerator
                 'fgcolor' => $options['foreground_color'],
                 'bgcolor' => $options['background_color'],
                 'module_width' => $options['width'],
-                'module_height' => $options['height'],
-                'show_text' => $options['text'],
+                'module_height' => $options['height']
             ];
 
             $pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');
@@ -188,8 +185,7 @@ class BarcodeGenerator
                 'fgcolor' => $options['foreground_color'],
                 'bgcolor' => $options['background_color'],
                 'module_width' => $options['width'],
-                'module_height' => $options['height'],
-                'show_text' => $options['text'],
+                'module_height' => $options['height']
             ];
 
             $pdf->write1DBarcode($code, $this->getTCPDFType($type), '', '', '', 18, 0.4, $styles, 'S');
